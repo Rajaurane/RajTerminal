@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live Nifty Trading</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      background: linear-gradient(to right, #1f4037, #99f2c8);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+    h1 {
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 4px #000000;
+    }
+    .data-box {
+      background-color: rgba(0, 0, 0, 0.3);
+      border-radius: 15px;
+      padding: 20px;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    }
+    .data-box h2 {
+      margin: 10px 0;
+    }
+    .label {
+      font-weight: bold;
+    }
+    .toggle {
+      margin-top: 20px;
+    }
+    select {
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 10px;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>Live Nifty Trading Terminal</h1>
+  <div class="toggle">
+    <label for="index">Choose Index: </label>
+    <select id="index" onchange="updateData()">
+      <option value="NIFTY">NIFTY</option>
+      <option value="BANKNIFTY">BANKNIFTY</option>
+    </select>
+  </div>
+  <div class="data-box">
+    <h2><span class="label">Current Price:</span> <span id="price">Loading...</span></h2>
+    <h2><span class="label">Recommended Buy:</span> <span id="buy">-</span></h2>
+    <h2><span class="label">Stop Loss:</span> <span id="stoploss">-</span></h2>
+    <h2><span class="label">Target Sell:</span> <span id="target">-</span></h2>
+  </div>
+  <script>
+    async function updateData() {
+      const index = document.getElementById('index').value;
+
+      // Fetching data from the Flask backend
+      const response = await fetch(`/api/price?index=${index}`);
+      const data = await response.json();
+
+      document.getElementById('price').textContent = data.price;
+      document.getElementById('buy').textContent = data.buy;
+      document.getElementById('stoploss').textContent = data.stoploss;
+      document.getElementById('target').textContent = data.target;
+    }
+
+    // Update on load
+    updateData();
+    setInterval(updateData, 10000); // refresh every 10 seconds
+  </script>
+</body>
+</html>
